@@ -41,22 +41,12 @@ if __name__ == "__main__":
     TestRunner.add_arguments(parser)
     args = parser.parse_args(sys.argv[1:])
 
-
-    test_runner = TestRunner(
-        pattern=getattr(args, 'pattern', None),
-        top_level=getattr(args, 'top_level', None),
-        verbosity=getattr(args, 'verbosity', 1),
-        interactive=getattr(args, 'interactive', True),
-        failfast=getattr(args, 'failfast', False),
-        keepdb=getattr(args, 'keepdb', False),
-        reverse=getattr(args, 'reverse', False),
-        debug_mode=getattr(args, 'debug_mode', False),
-        debug_sql=getattr(args, 'debug_sql', False),
-        parallel=getattr(args, 'parallel', 0),
-        tags=getattr(args, 'tags', None),
-        exclude_tags=getattr(args, 'exclude_tags', None)
-    )
-
-    failures = test_runner.run_tests(['tests'])
+    prepared_arguments = {
+        getattr(args, arg_name, arg_default) for arg_name, arg_default in
+        (('pattern', None), ('top_level', None), ('verbosity', 1), ('interactive', True), ('failfast', False),
+         ('keepdb', False), ('reverse', False), ('debug_mode', False), ('debug_sql', False), ('parallel', 0),
+         ('tags', None), ('exclude_tags', None),)
+    }
+    failures = TestRunner(prepared_arguments).run_tests(['tests'])
 
     sys.exit(bool(failures))
