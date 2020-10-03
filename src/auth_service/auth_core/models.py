@@ -1,6 +1,6 @@
 from django.db import models
 
-from py_kor.types import ChoiceEnum
+from py_kor.pk_mixins import ChoiceEnum
 
 
 class User(models.Model):
