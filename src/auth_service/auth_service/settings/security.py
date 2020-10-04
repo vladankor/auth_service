@@ -1,5 +1,11 @@
+import os
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '50ka1uk5@ouw1rt4d=rz(z=^-9bs&13wotb962@zx^0tflyisn'
+SECRET_KEY = os.environ.get('SECRET_KEY', '50ka1uk5@ouw1rt4d=rz(z=^-9bs&13wotb962@zx^0tflyisn')
+
+JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', '50ka1uk5@ouw1rt4d=rz(z=^-9bs&13wotb962@zx^0tflyisn')
+JWT_LIFE_TIME_SECONDS = int(os.environ.get('JWT_LIFE_TIME_SECONDS', 60 * 60 * 24 * 8))
 
 # CORS integration
 CORS_ALLOW_HEADERS = [

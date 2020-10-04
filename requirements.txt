@@ -24,5 +24,6 @@ django-debug-toolbar==1.11
 django-redis==4.10.0
 django-json-widget==0.2.0
 django-postgres-extensions==0.9.3
-py-kor>=0.0.3
+py-kor>=0.0.4
 translate>=3.5.0
+PyJWT>=1.7.1

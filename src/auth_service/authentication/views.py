@@ -1,7 +1,12 @@
 from rest_framework.decorators import api_view
-from django.http.response import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
+from django.http.response import JsonResponse, HttpResponseBadRequest, HttpResponseServerError
 
-from auth_core.utilities.user_helpers import is_user_exists, create_user, error_user_already_exists_msg
+from auth_core.utilities.user_helpers import (
+    is_user_exists,
+    error_user_already_exists_msg,
+    create_user,
+    result_user_created_msg,
+)
 
 
 def validate_user_parameters(email, phone_number, password):
@@ -29,9 +34,16 @@ def register(request):
         return HttpResponseBadRequest(content=error_invalid_user_parameters_msg(email, phone_number, password))
 
     if is_user_exists(email, phone_number):
-        return HttpResponse(content=error_user_already_exists_msg(email, phone_number), status=409)
+        return JsonResponse(data=error_user_already_exists_msg(email=email, phone_number=phone_number).result,
+                            status=409)
 
     if create_user(email, phone_number, password) is None:
         return HttpResponseServerError(content='User creation failed')
 
-    return HttpResponse(content='User created', status=201)
+    return JsonResponse(content=result_user_created_msg().result,
+                        status=201)
+
+
+@api_view(['POST'])
+def authenticate(request):
+    pass

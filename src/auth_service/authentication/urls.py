@@ -1,11 +1,11 @@
 from django.urls import path
 
-from auth_service.authentication.views import (
+from authentication.views import (
     register,
-    authorize,
+    authenticate,
 )
 
 urlpatterns = [
     path('/register/', register),
-    path('/authorize/', authorize),
+    path('/authorize/', authenticate),
 ]
