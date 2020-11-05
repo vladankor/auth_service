@@ -1,5 +1,4 @@
 from typing import Dict, Optional
-import datetime
 from django.utils import timezone
 
 import jwt
@@ -8,14 +7,11 @@ from auth_service.settings.security import (
     JWT_SECRET_KEY,
     JWT_LIFE_TIME_SECONDS
 )
+from auth_service.settings.main import SERVICE_NAME
 
 
 """
-JWT data format:
-    - email: String
-    - phone_number: String
-    - rights: Integer
-    - expires_at: TimeStamp
+JWT data format
 """
 
 
@@ -25,16 +21,16 @@ class JWTWrapper:
                  data_to_generate_jwt: Dict = None):
         if not encoded_jwt:
             if data_to_generate_jwt:
-                self.__data = jwt.encode(data_to_generate_jwt, JWT_SECRET_KEY).decode('utf-8')
-                self.__access_token = encoded_jwt
-                self.__expires_at = datetime.datetime.fromtimestamp(self.__data.get())
+                self.__data = jwt.encode(payload=data_to_generate_jwt, key=JWT_SECRET_KEY).decode('utf-8')
+                self.__value = encoded_jwt
+                self.__expires_at = timezone.datetime.fromtimestamp(data_to_generate_jwt.get('exp'))
             else:
                 raise ValueError(f'Expected encoded_jwt or data_to_generate_jwt, but received None')
         else:
             try:
                 self.__data = data_to_generate_jwt
-                self.__access_token = jwt.decode(encoded_jwt.encode('utf-8'), JWT_SECRET_KEY)
-                self.__expires_at = timezone.now() + datetime.timedelta(seconds=JWT_LIFE_TIME_SECONDS)
+                self.__value = jwt.decode(encoded_jwt.encode('utf-8'), key=JWT_SECRET_KEY, issuer=SERVICE_NAME)
+                self.__expires_at = timezone.now() + timezone.timedelta(seconds=JWT_LIFE_TIME_SECONDS)
             except jwt.DecodeError as e:
                 raise ValueError(f'Unable encode JWT {e}')
 
@@ -42,13 +38,18 @@ class JWTWrapper:
         return timezone.now() < self.__expires_at
 
     @property
-    def access_token(self):
-        return self.__access_token
+    def expires_at(self):
+        return self.__expires_at
+
+    @property
+    def value(self):
+        return self.__value
 
 
 def create_jwt(data_to_generate_jwt: Dict) -> JWTWrapper:
     """
     Return JWTWrapper
+    Raise ValueError exception if data_to_generate_jwt is NOne
     """
     return JWTWrapper(data_to_generate_jwt=data_to_generate_jwt)
 

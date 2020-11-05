@@ -22,6 +22,7 @@ from django.urls import (
 # Korobov TODO: Add API-version system
 urlpatterns = [
     path('api/admin/', admin.site.urls),
-    path('api/authentication/', include('authentication.urls')),
-    path('api/authorization/', include('authorization.urls')),
+    path('api/', include('registration.urls')),
+    path('api/profile/', include('profile.urls')),
+    path('api/service/', include('service.urls')),
 ]

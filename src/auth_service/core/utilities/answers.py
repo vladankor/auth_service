@@ -35,37 +35,28 @@ class Result:
             'data': data if data else {}
         }
 
-    #def add_data(self, dict_path: DictPath, value: Union[str, Dict], create_if_not_exists=True):
-    #    current_node = self.__result
-    #    sub_node_names = dict_path.split('.')
-    #    for sub_node_name, count in zip(sub_node_names, range(len(sub_node_names))):
-    #        # В общем, нужно здесь что-то придумать с концом и вообще перенести эту штуку в py_kor
-    #        if count == len(sub_node_names):
-    #            break
-    #        sub_node = current_node.get(sub_node_name, None)
-    #        if sub_node is None:
-    #            if not create_if_not_exists:
-    #                raise ValueError(f'Node {sub_node} not found')
-    #            current_node[sub_node_name] = {}
-    #    if current_node is None:
-    #        current_node = sub_node
-
     @property
-    def result(self):
+    def json(self) -> Dict:
         return self.__result
 
 
 class ErrorCode(Enum):
+    # Standard - 0xx
     ERROR = 0
-    USER_ALREADY_EXISTS = 1
-    USER_NOT_FOUND = 2
+    INVALID_PARAMETERS = 1
+    # User - 1xx
+    USER_ALREADY_EXISTS = 100
+    USER_NOT_FOUND = 101
+    USER_NOT_CREATED = 102
+    # Session - 2xx
+    SESSION_NOT_FOUND = 201
 
 
 class Error(Result):
     def __init__(self,
                  description: str = '',
                  user_description: str = '',
-                 error_code: int = ErrorCode.ERROR.value(),
+                 error_code: int = ErrorCode.ERROR.value,
                  data: Dict = None):
         super(Error, self).__init__(description, user_description, data)
         self.__result.update({'error_code': str(error_code)})
